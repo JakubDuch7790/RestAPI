@@ -1,4 +1,6 @@
-﻿using GodlessAPI.Models;
+﻿using GodlessAPI.Data;
+using GodlessAPI.Models;
+using GodlessAPI.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GodlessAPI.Controllers;
@@ -7,12 +9,14 @@ namespace GodlessAPI.Controllers;
 public class GodlessAPIController : ControllerBase
 {
     [HttpGet]
-    public IEnumerable<Godless> GetGodless()
+    public IEnumerable<GodlessDTO> GetGodless()
     {
-        return new List<Godless>
-        {
-            new Godless { Id = 1, Name = "Thor"},
-            new Godless { Id = 2, Name = "Odin"}
-        };
+        return GodlessStore.GodlessList;
+    }
+
+    [HttpGet("{id:int}")]
+    public GodlessDTO GetGod(int id)
+    {
+        return GodlessStore.GodlessList.FirstOrDefault(god => god.Id == id);
     }
 }
