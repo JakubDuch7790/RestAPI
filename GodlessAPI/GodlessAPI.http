@@ -1,0 +1,6 @@
+@GodlessAPI_HostAddress = http://localhost:5029
+
+GET {{GodlessAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
