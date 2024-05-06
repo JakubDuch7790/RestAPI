@@ -1,0 +1,7 @@
+﻿namespace GodlessAPI.Models;
+
+public class Godless
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
