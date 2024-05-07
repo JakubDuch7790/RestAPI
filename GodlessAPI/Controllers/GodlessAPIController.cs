@@ -15,8 +15,20 @@ public class GodlessAPIController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public GodlessDTO GetGod(int id)
+    public ActionResult<GodlessDTO> GetGod(int id)
     {
-        return GodlessStore.GodlessList.FirstOrDefault(god => god.Id == id);
+        if(id == 0)
+        {
+            return BadRequest();
+        }
+
+        var god = GodlessStore.GodlessList.FirstOrDefault(god => god.Id == id);
+
+        if(god == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(god);
     }
 }
