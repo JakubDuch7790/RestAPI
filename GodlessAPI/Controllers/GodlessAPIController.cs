@@ -37,4 +37,26 @@ public class GodlessAPIController : ControllerBase
 
         return Ok(god);
     }
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<GodlessDTO> CreateGod([FromBody] GodlessDTO godlessDTO)
+    {
+        if (godlessDTO == null)
+        { 
+            return BadRequest(godlessDTO);
+        }
+
+        if (godlessDTO.Id > 0)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        godlessDTO.Id = GodlessStore.GodlessList.OrderByDescending(god => god.Id).FirstOrDefault().Id + 1;
+
+        GodlessStore.GodlessList.Add(godlessDTO);
+
+        return Ok(godlessDTO);
+    }
 }
