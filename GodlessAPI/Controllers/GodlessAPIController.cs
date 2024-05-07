@@ -15,6 +15,12 @@ public class GodlessAPIController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    // You can do it like this as well
+
+    //[ProducesResponseType(200, Type= typeof(GodlessDTO))]
     public ActionResult<GodlessDTO> GetGod(int id)
     {
         if(id == 0)
