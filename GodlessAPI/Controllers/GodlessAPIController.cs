@@ -14,7 +14,7 @@ public class GodlessAPIController : ControllerBase
         return GodlessStore.GodlessList;
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:int}", Name = "GetGod")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -38,7 +38,7 @@ public class GodlessAPIController : ControllerBase
         return Ok(god);
     }
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<GodlessDTO> CreateGod([FromBody] GodlessDTO godlessDTO)
@@ -57,6 +57,6 @@ public class GodlessAPIController : ControllerBase
 
         GodlessStore.GodlessList.Add(godlessDTO);
 
-        return Ok(godlessDTO);
+        return CreatedAtRoute("GetGod", new {id = godlessDTO.Id} , godlessDTO);
     }
 }
