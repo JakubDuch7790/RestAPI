@@ -81,4 +81,23 @@ public class GodlessAPIController : ControllerBase
 
         return NoContent();
     }
+    [HttpPut("{id:int}", Name = "UpdateGod")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult UpdateGod(int id, [FromBody]GodlessDTO god)
+    {
+        if (id != god.Id || god == null)
+        {
+            return BadRequest();
+        }
+
+        var update = GodlessStore.GodlessList.FirstOrDefault(x => x.Id == id);
+
+        update.Name = god.Name;
+        update.Pantheon = god.Pantheon;
+        update.Universe = god.Universe;
+        
+
+        return NoContent();
+    }
 }
