@@ -59,4 +59,26 @@ public class GodlessAPIController : ControllerBase
 
         return CreatedAtRoute("GetGod", new {id = godlessDTO.Id} , godlessDTO);
     }
+
+    [HttpDelete("{id:int}", Name = "RemoveGod")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult RemoveGod(int id)
+    {
+        if (id == 0)
+        {
+            return BadRequest();
+        }
+        var god = GodlessStore.GodlessList.FirstOrDefault(g => g.Id == id); 
+
+        if (god == null)
+        {
+            return NotFound();
+        }
+
+        GodlessStore.GodlessList.Remove(god);
+
+        return NoContent();
+    }
 }
