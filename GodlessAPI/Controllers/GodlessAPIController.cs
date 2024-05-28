@@ -1,6 +1,7 @@
 ﻿using GodlessAPI.Data;
 using GodlessAPI.Models;
 using GodlessAPI.Models.Dto;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GodlessAPI.Controllers;
@@ -98,6 +99,32 @@ public class GodlessAPIController : ControllerBase
         update.Universe = god.Universe;
         
 
+        return NoContent();
+    }
+
+    [HttpPatch("{id:int}", Name = "PatchGod")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult PatchGod (int id, JsonPatchDocument<GodlessDTO> patch)
+    {
+        if (patch == null || id == 0)
+        {
+            return BadRequest();
+        }
+
+        var god = GodlessStore.GodlessList.First(obj => obj.Id == id);
+
+        if(god == null)
+        {
+            return BadRequest();
+        }
+
+        patch.ApplyTo(god, ModelState);
+
+        if(!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
         return NoContent();
     }
 }
