@@ -9,9 +9,20 @@ namespace GodlessAPI.Controllers;
 [ApiController]
 public class GodlessAPIController : ControllerBase
 {
+    private readonly ILogger<GodlessAPIController> _logger;
+
+    public GodlessAPIController(ILogger<GodlessAPIController> logger)
+    {
+        _logger = logger;
+    }
+
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IEnumerable<GodlessDTO> GetGodless()
     {
+
+        _logger.LogInformation("Endpoint called successful");
+
         return GodlessStore.GodlessList;
     }
 
@@ -26,6 +37,7 @@ public class GodlessAPIController : ControllerBase
     {
         if(id == 0)
         {
+            _logger.LogError($"Invalid id provided: {id} !");
             return BadRequest();
         }
 
