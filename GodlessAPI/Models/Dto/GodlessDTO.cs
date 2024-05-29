@@ -1,4 +1,7 @@
-﻿namespace GodlessAPI.Models.Dto
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GodlessAPI.Models.Dto
 {
     public class GodlessDTO
     {
