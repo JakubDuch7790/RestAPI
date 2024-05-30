@@ -10,20 +10,19 @@ namespace GodlessAPI.Controllers;
 public class GodlessAPIController : ControllerBase
 {
     private readonly ILogger<GodlessAPIController> _logger;
+    private readonly ApplicationDbContext _db;
 
-    public GodlessAPIController(ILogger<GodlessAPIController> logger)
+    public GodlessAPIController(ILogger<GodlessAPIController> logger, ApplicationDbContext db)
     {
         _logger = logger;
+        _db = db;
     }
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IEnumerable<GodlessDTO> GetGodless()
+    public ActionResult<IEnumerable<GodlessDTO>>  GetGodless()
     {
-
-        _logger.LogInformation("Endpoint called successful");
-
-        return GodlessStore.GodlessList;
+        return Ok(_db.Gods);
     }
 
     [HttpGet("{id:int}", Name = "GetGod")]
@@ -41,7 +40,7 @@ public class GodlessAPIController : ControllerBase
             return BadRequest();
         }
 
-        var god = GodlessStore.GodlessList.FirstOrDefault(god => god.Id == id);
+        var god = _db.Gods.FirstOrDefault(god => god.Id == id);
 
         if(god == null)
         {
@@ -66,9 +65,15 @@ public class GodlessAPIController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        godlessDTO.Id = GodlessStore.GodlessList.OrderByDescending(god => god.Id).FirstOrDefault().Id + 1;
+        Godless newGod = new()
+        {
+            Name = godlessDTO.Name,
+            Creation = godlessDTO.Creation
 
-        GodlessStore.GodlessList.Add(godlessDTO);
+        };
+
+        _db.Gods.Add(newGod);
+        _db.SaveChanges();
 
         return CreatedAtRoute("GetGod", new {id = godlessDTO.Id} , godlessDTO);
     }
@@ -83,14 +88,15 @@ public class GodlessAPIController : ControllerBase
         {
             return BadRequest();
         }
-        var god = GodlessStore.GodlessList.FirstOrDefault(g => g.Id == id); 
+        var god = _db.Gods.FirstOrDefault(g => g.Id == id); 
 
         if (god == null)
         {
             return NotFound();
         }
 
-        GodlessStore.GodlessList.Remove(god);
+        _db.Gods.Remove(god);
+        _db.SaveChanges();
 
         return NoContent();
     }
@@ -104,11 +110,21 @@ public class GodlessAPIController : ControllerBase
             return BadRequest();
         }
 
-        var update = GodlessStore.GodlessList.FirstOrDefault(x => x.Id == id);
+        var update = _db.Gods.FirstOrDefault(x => x.Id == id);
 
-        update.Name = god.Name;
-        update.Pantheon = god.Pantheon;
-        update.Universe = god.Universe;
+        Godless newGod = new()
+        {
+            Name = god.Name,
+            Creation = god.Creation
+
+        };
+
+        _db.Gods.Update(newGod);
+        _db.SaveChanges();
+
+        //update.Name = god.Name;
+        //update.Pantheon = god.Pantheon;
+        //update.Universe = god.Universe;
         
 
         return NoContent();
@@ -124,14 +140,29 @@ public class GodlessAPIController : ControllerBase
             return BadRequest();
         }
 
-        var god = GodlessStore.GodlessList.First(obj => obj.Id == id);
+        var god = _db.Gods.First(obj => obj.Id == id);
+
+        GodlessDTO gotPatch = new()
+        {
+            Name = god.Name,
+            Creation = god.Creation
+        };
 
         if(god == null)
         {
             return BadRequest();
         }
 
-        patch.ApplyTo(god, ModelState);
+        patch.ApplyTo(gotPatch, ModelState);
+
+        Godless patchedGod = new()
+        {
+            Name = gotPatch.Name,
+            Creation = gotPatch.Creation
+        };
+
+        _db.Gods.Update(patchedGod);
+        _db.SaveChanges();
 
         if(!ModelState.IsValid)
         {

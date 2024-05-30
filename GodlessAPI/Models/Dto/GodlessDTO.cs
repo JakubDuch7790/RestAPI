@@ -7,8 +7,10 @@ namespace GodlessAPI.Models.Dto
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Pantheon { get; set; }
-        public string Universe { get; set; }
+        public DateTime Creation { get; set; }
+
+        //public string Pantheon { get; set; }
+        //public string Universe { get; set; }
 
     }
 }
