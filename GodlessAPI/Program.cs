@@ -7,12 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnetion"));
+    options
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnetion"))
+        .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
+        .EnableSensitiveDataLogging();
 });
 
 builder.Services
 
-    .AddControllers(option => option.ReturnHttpNotAcceptable=true)
+    .AddControllers(/*option => option.ReturnHttpNotAcceptable=true*/)
     .AddNewtonsoftJson()
     .AddXmlDataContractSerializerFormatters();
 

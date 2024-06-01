@@ -16,18 +16,18 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Godless>()
-            .Property(p => p.Creation)
-            .HasDefaultValueSql("GETDATE()");
+        //modelBuilder.Entity<Godless>()
+        //    .Property(p => p.Creation)
+        //    .HasDefaultValueSql("GETDATE()");
 
     // Seed data
 
     modelBuilder.Entity<Godless>().HasData(
-            new Godless { Id = 1, Name = "Product A", Creation = DateTime.Now },
-            new Godless { Id = 2, Name = "Thor", Creation = DateTime.Now },
-            new Godless { Id = 3, Name = "Odin A", Creation = DateTime.Now },
-            new Godless { Id = 4, Name = "Thanos A", Creation = DateTime.Now },
-            new Godless { Id = 5, Name = "Julius A", Creation = DateTime.Now }
+            new Godless { Id = 1, Name = "Product A",   /*Creation = DateTime.Now*/ },
+            new Godless { Id = 2, Name = "Thor",        /*Creation = DateTime.Now*/ },
+            new Godless { Id = 3, Name = "Odin A",      /*Creation = DateTime.Now*/ },
+            new Godless { Id = 4, Name = "Thanos A",    /*Creation = DateTime.Now*/ },
+            new Godless { Id = 5, Name = "Julius A",    /*Creation = DateTime.Now*/ }
         );
     }
 

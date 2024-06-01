@@ -3,6 +3,7 @@ using GodlessAPI.Models;
 using GodlessAPI.Models.Dto;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GodlessAPI.Controllers;
 [Route("api/GodlessAPI")]
@@ -68,7 +69,7 @@ public class GodlessAPIController : ControllerBase
         Godless newGod = new()
         {
             Name = godlessDTO.Name,
-            Creation = godlessDTO.Creation
+            //Creation = godlessDTO.Creation
 
         };
 
@@ -110,24 +111,39 @@ public class GodlessAPIController : ControllerBase
             return BadRequest();
         }
 
-        var update = _db.Gods.FirstOrDefault(x => x.Id == id);
+        //var update = _db.Gods.AsNoTracking().FirstOrDefault(x => x.Id == id);
+        var update = _db.Gods.Find(id);
 
-        Godless newGod = new()
+        if (update == null)
         {
-            Name = god.Name,
-            Creation = god.Creation
+            return NotFound();
+        }
 
-        };
+        update.Name = god.Name;
 
-        _db.Gods.Update(newGod);
+         _db.Entry(update).State = EntityState.Modified;
+
+        //Godless newGod = new()
+        //{
+        //    Name = god.Name,
+        //};
+
+        //_db.Attach(newGod);
+
+        //_db.Gods(.State = EntityState.Modified;
+
+        //_db.Gods.State = EntityState.Modified;
+
+        //dbContext.Entry(e).State = EntityState.Modified;
+        //_db.Gods.Update(newGod);
         _db.SaveChanges();
 
         //update.Name = god.Name;
         //update.Pantheon = god.Pantheon;
         //update.Universe = god.Universe;
-        
 
-        return NoContent();
+
+        return Ok(update);
     }
 
     [HttpPatch("{id:int}", Name = "PatchGod")]
@@ -140,12 +156,14 @@ public class GodlessAPIController : ControllerBase
             return BadRequest();
         }
 
-        var god = _db.Gods.First(obj => obj.Id == id);
+        // AsNoTracking means that EF CORE won't start to track this object after retrieving it from DB.
+
+        var god = _db.Gods.AsNoTracking().FirstOrDefault(obj => obj.Id == id);
 
         GodlessDTO gotPatch = new()
         {
             Name = god.Name,
-            Creation = god.Creation
+            //Creation = god.Creation
         };
 
         if(god == null)
@@ -158,7 +176,7 @@ public class GodlessAPIController : ControllerBase
         Godless patchedGod = new()
         {
             Name = gotPatch.Name,
-            Creation = gotPatch.Creation
+            //Creation = gotPatch.Creation
         };
 
         _db.Gods.Update(patchedGod);
