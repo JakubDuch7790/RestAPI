@@ -76,7 +76,7 @@ public class GodlessAPIController : ControllerBase
         _db.Gods.Add(newGod);
         _db.SaveChanges();
 
-        return CreatedAtRoute("GetGod", new {id = godlessDTO.Id} , godlessDTO);
+        return CreatedAtRoute("GetGod", new {id = newGod.Id} , godlessDTO);
     }
 
     [HttpDelete("{id:int}", Name = "RemoveGod")]
@@ -104,6 +104,7 @@ public class GodlessAPIController : ControllerBase
     [HttpPut("{id:int}", Name = "UpdateGod")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult UpdateGod(int id, [FromBody]GodlessDTO god)
     {
         if (id != god.Id || god == null)
@@ -111,39 +112,35 @@ public class GodlessAPIController : ControllerBase
             return BadRequest();
         }
 
-        //var update = _db.Gods.AsNoTracking().FirstOrDefault(x => x.Id == id);
-        var update = _db.Gods.Find(id);
+        // The commented section is old way of update which does not counting on EF core magic bullshit
+        // I am keeping this just in case that in future the EF Kokot Core will stop working once again
 
-        if (update == null)
-        {
-            return NotFound();
-        }
+        //var update = _db.Gods.FirstOrDefault(x => x.Id == id);
 
-        update.Name = god.Name;
-
-         _db.Entry(update).State = EntityState.Modified;
-
-        //Godless newGod = new()
+        //if (update == null)
         //{
-        //    Name = god.Name,
-        //};
-
-        //_db.Attach(newGod);
-
-        //_db.Gods(.State = EntityState.Modified;
-
-        //_db.Gods.State = EntityState.Modified;
-
-        //dbContext.Entry(e).State = EntityState.Modified;
-        //_db.Gods.Update(newGod);
-        _db.SaveChanges();
+        //    return NotFound();
+        //}
 
         //update.Name = god.Name;
-        //update.Pantheon = god.Pantheon;
-        //update.Universe = god.Universe;
+
+        //_db.Entry(update).State = EntityState.Modified;
 
 
-        return Ok(update);
+        // This should work but EF core is pile of shit
+        // Now it suddenly works
+
+        Godless newGod = new()
+        {
+            Name = god.Name,
+            Id = god.Id
+        };
+
+        _db.Gods.Update(newGod);
+
+        _db.SaveChanges();
+
+        return NoContent();
     }
 
     [HttpPatch("{id:int}", Name = "PatchGod")]
