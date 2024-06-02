@@ -159,7 +159,8 @@ public class GodlessAPIController : ControllerBase
 
         GodlessDTO gotPatch = new()
         {
-            Name = god.Name,
+            Id= god.Id,
+            Name = god.Name
             //Creation = god.Creation
         };
 
@@ -172,7 +173,8 @@ public class GodlessAPIController : ControllerBase
 
         Godless patchedGod = new()
         {
-            Name = gotPatch.Name,
+            Id = gotPatch.Id,
+            Name = gotPatch.Name
             //Creation = gotPatch.Creation
         };
 
