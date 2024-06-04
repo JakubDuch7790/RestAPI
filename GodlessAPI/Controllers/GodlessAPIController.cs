@@ -128,9 +128,9 @@ public class GodlessAPIController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateGod(int id, [FromBody]GodlessUpdateDTO god)
+    public async Task<IActionResult> UpdateGod(int id, [FromBody]GodlessUpdateDTO updateDTO)
     {
-        if (id != god.Id || god == null)
+        if (id != updateDTO.Id || updateDTO == null)
         {
             return BadRequest();
         }
@@ -153,13 +153,15 @@ public class GodlessAPIController : ControllerBase
         // This should work but EF core is pile of shit
         // Now it suddenly works
 
-        Godless newGod = new()
-        {
-            Name = god.Name,
-            Id = god.Id
-        };
+        Godless updatedGod = _mapper.Map<Godless>(updateDTO);
 
-        _db.Gods.Update(newGod);
+        //Godless newGod = new()
+        //{
+        //    Name = updateDTO.Name,
+        //    Id = updateDTO.Id
+        //};
+
+        _db.Gods.Update(updatedGod);
 
         await _db.SaveChangesAsync();
 
@@ -180,24 +182,28 @@ public class GodlessAPIController : ControllerBase
 
         var god = await _db.Gods.AsNoTracking().FirstOrDefaultAsync(obj => obj.Id == id);
 
-        GodlessUpdateDTO gotPatch = new()
-        {
-            Id = god.Id,
-            Name = god.Name
-        };
+        GodlessUpdateDTO godlessUpdateDTO = _mapper.Map<GodlessUpdateDTO>(god);
+
+        //GodlessUpdateDTO gotPatch = new()
+        //{
+        //    Id = god.Id,
+        //    Name = god.Name
+        //};
 
         if(god == null)
         {
             return BadRequest();
         }
 
-        patch.ApplyTo(gotPatch, ModelState);
+        patch.ApplyTo(godlessUpdateDTO, ModelState);
 
-        Godless patchedGod = new()
-        {
-            Id = gotPatch.Id,
-            Name = gotPatch.Name
-        };
+        Godless patchedGod = _mapper.Map<Godless>(godlessUpdateDTO);
+
+        //Godless patchedGod = new()
+        //{
+        //    Id = gotPatch.Id,
+        //    Name = gotPatch.Name
+        //};
 
         _db.Gods.Update(patchedGod);
         await _db.SaveChangesAsync();
