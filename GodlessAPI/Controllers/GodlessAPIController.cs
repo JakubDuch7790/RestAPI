@@ -1,4 +1,5 @@
-﻿using GodlessAPI.Data;
+﻿using AutoMapper;
+using GodlessAPI.Data;
 using GodlessAPI.Models;
 using GodlessAPI.Models.Dto;
 using Microsoft.AspNetCore.JsonPatch;
@@ -11,27 +12,31 @@ namespace GodlessAPI.Controllers;
 public class GodlessAPIController : ControllerBase
 {
     private readonly ILogger<GodlessAPIController> _logger;
+    private readonly IMapper _mapper;
     private readonly ApplicationDbContext _db;
 
-    public GodlessAPIController(ILogger<GodlessAPIController> logger, ApplicationDbContext db)
+    public GodlessAPIController(ILogger<GodlessAPIController> logger, ApplicationDbContext db, IMapper mapper)
     {
         _logger = logger;
         _db = db;
+        _mapper = mapper;
     }
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GodlessDTO>>>  GetGodless()
+    public async Task<ActionResult<IEnumerable<GodlessDTO>>> GetGods()
     {
-        return  Ok(await _db.Gods.ToListAsync());
+        IEnumerable<Godless> godsList = await _db.Gods.ToListAsync();
+
+        return  Ok(_mapper.Map<List<GodlessDTO>>(godsList));
     }
 
     [HttpGet("{id:int}", Name = "GetGod")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    // You can do it like this as well
 
+    // You can do it like this as well
     //[ProducesResponseType(200, Type= typeof(GodlessDTO))]
     public async Task<ActionResult<GodlessDTO>> GetGod(int id)
     {
@@ -48,18 +53,21 @@ public class GodlessAPIController : ControllerBase
             return NotFound();
         }
 
-        return Ok(god);
+        return Ok(_mapper.Map<GodlessDTO>(god));
     }
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<GodlessDTO>> CreateGod([FromBody] GodlessCreatedDTO godlessDTO)
+    public async Task<ActionResult<GodlessDTO>> CreateGod([FromBody] GodlessCreatedDTO createDTO)
     {
-        if (godlessDTO == null)
+        if (createDTO == null)
         { 
-            return BadRequest(godlessDTO);
+            return BadRequest(createDTO);
         }
+
+        //This validation return 400
 
         //if(await _db.Gods.FirstOrDefaultAsync(god => god.Name.ToLower() == godlessDTO.Name.ToLower()) != null)
         //{
@@ -68,23 +76,29 @@ public class GodlessAPIController : ControllerBase
         //    return BadRequest();
         //}
         
+        //Since we are using multiple DTOs, this is redundant
+
         //if (godlessDTO.Id > 0)
         //{
         //    return StatusCode(StatusCodes.Status500InternalServerError);
         //}
 
-        Godless newGod = new()
-        {
-            Name = godlessDTO.Name,
-            Creation = godlessDTO.Creation
-        };
 
-        await _db.Gods.AddAsync(newGod);
+        Godless godToAdd = _mapper.Map<Godless>(createDTO);
+
+        //We are using AutoMapper instead of this:
+
+        //Godless newGod = new()
+        //{
+        //    Name = createDTO.Name,
+        //    Creation = createDTO.Creation
+        //};
+
+        await _db.Gods.AddAsync(godToAdd);
         await _db.SaveChangesAsync();
 
-        return CreatedAtRoute("GetGod", new {id = newGod.Id} , newGod);
+        return CreatedAtRoute("GetGod", new {id = godToAdd.Id} , godToAdd);
     }
-
 
     [HttpDelete("{id:int}", Name = "RemoveGod")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
