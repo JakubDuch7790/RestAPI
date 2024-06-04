@@ -1,3 +1,4 @@
+using GodlessAPI;
 using GodlessAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
         .EnableSensitiveDataLogging();
 });
+
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 builder.Services
 
