@@ -3,10 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GodlessAPI.Models.Dto
 {
-    public class GodlessDTO
+    public class GodlessUpdateDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
+
         //public DateTime Creation { get; set; }
 
         //public string Pantheon { get; set; }

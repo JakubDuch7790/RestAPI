@@ -21,9 +21,9 @@ public class GodlessAPIController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<GodlessDTO>>  GetGodless()
+    public async Task<ActionResult<IEnumerable<GodlessDTO>>>  GetGodless()
     {
-        return Ok(_db.Gods);
+        return  Ok(await _db.Gods.ToListAsync());
     }
 
     [HttpGet("{id:int}", Name = "GetGod")]
@@ -33,7 +33,7 @@ public class GodlessAPIController : ControllerBase
     // You can do it like this as well
 
     //[ProducesResponseType(200, Type= typeof(GodlessDTO))]
-    public ActionResult<GodlessDTO> GetGod(int id)
+    public async Task<ActionResult<GodlessDTO>> GetGod(int id)
     {
         if(id == 0)
         {
@@ -41,7 +41,7 @@ public class GodlessAPIController : ControllerBase
             return BadRequest();
         }
 
-        var god = _db.Gods.FirstOrDefault(god => god.Id == id);
+        var god = await _db.Gods.FirstOrDefaultAsync(god => god.Id == id);
 
         if(god == null)
         {
@@ -54,42 +54,49 @@ public class GodlessAPIController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<GodlessDTO> CreateGod([FromBody] GodlessDTO godlessDTO)
+    public async Task<ActionResult<GodlessDTO>> CreateGod([FromBody] GodlessCreatedDTO godlessDTO)
     {
         if (godlessDTO == null)
         { 
             return BadRequest(godlessDTO);
         }
 
-        if (godlessDTO.Id > 0)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
+        //if(await _db.Gods.FirstOrDefaultAsync(god => god.Name.ToLower() == godlessDTO.Name.ToLower()) != null)
+        //{
+        //    ModelState.AddModelError("CustomError", "God is only one");
+
+        //    return BadRequest();
+        //}
+        
+        //if (godlessDTO.Id > 0)
+        //{
+        //    return StatusCode(StatusCodes.Status500InternalServerError);
+        //}
 
         Godless newGod = new()
         {
             Name = godlessDTO.Name,
-            //Creation = godlessDTO.Creation
-
+            Creation = godlessDTO.Creation
         };
 
-        _db.Gods.Add(newGod);
-        _db.SaveChanges();
+        await _db.Gods.AddAsync(newGod);
+        await _db.SaveChangesAsync();
 
-        return CreatedAtRoute("GetGod", new {id = newGod.Id} , godlessDTO);
+        return CreatedAtRoute("GetGod", new {id = newGod.Id} , newGod);
     }
+
 
     [HttpDelete("{id:int}", Name = "RemoveGod")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult RemoveGod(int id)
+    public async Task<IActionResult> RemoveGod(int id)
     {
         if (id == 0)
         {
             return BadRequest();
         }
-        var god = _db.Gods.FirstOrDefault(g => g.Id == id); 
+        var god = await _db.Gods.FirstOrDefaultAsync(g => g.Id == id); 
 
         if (god == null)
         {
@@ -97,15 +104,17 @@ public class GodlessAPIController : ControllerBase
         }
 
         _db.Gods.Remove(god);
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
 
         return NoContent();
     }
+
+
     [HttpPut("{id:int}", Name = "UpdateGod")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult UpdateGod(int id, [FromBody]GodlessDTO god)
+    public async Task<IActionResult> UpdateGod(int id, [FromBody]GodlessUpdateDTO god)
     {
         if (id != god.Id || god == null)
         {
@@ -138,7 +147,7 @@ public class GodlessAPIController : ControllerBase
 
         _db.Gods.Update(newGod);
 
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
 
         return NoContent();
     }
@@ -146,7 +155,7 @@ public class GodlessAPIController : ControllerBase
     [HttpPatch("{id:int}", Name = "PatchGod")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult PatchGod (int id, JsonPatchDocument<GodlessDTO> patch)
+    public async Task<IActionResult> PatchGod (int id, JsonPatchDocument<GodlessUpdateDTO> patch)
     {
         if (patch == null || id == 0)
         {
@@ -155,13 +164,12 @@ public class GodlessAPIController : ControllerBase
 
         // AsNoTracking means that EF CORE won't start to track this object after retrieving it from DB.
 
-        var god = _db.Gods.AsNoTracking().FirstOrDefault(obj => obj.Id == id);
+        var god = await _db.Gods.AsNoTracking().FirstOrDefaultAsync(obj => obj.Id == id);
 
-        GodlessDTO gotPatch = new()
+        GodlessUpdateDTO gotPatch = new()
         {
-            Id= god.Id,
+            Id = god.Id,
             Name = god.Name
-            //Creation = god.Creation
         };
 
         if(god == null)
@@ -175,11 +183,10 @@ public class GodlessAPIController : ControllerBase
         {
             Id = gotPatch.Id,
             Name = gotPatch.Name
-            //Creation = gotPatch.Creation
         };
 
         _db.Gods.Update(patchedGod);
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
 
         if(!ModelState.IsValid)
         {

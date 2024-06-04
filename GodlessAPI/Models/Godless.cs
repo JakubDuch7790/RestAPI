@@ -10,6 +10,6 @@ public class Godless
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string Name { get; set; }
-    //public DateTime Creation { get; set; }
+    public DateTime Creation { get; set; }
     //public DateTime Expiration { get; set; }
 }
