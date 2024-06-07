@@ -1,5 +1,7 @@
 using GodlessAPI;
 using GodlessAPI.Data;
+using GodlessAPI.Repository;
+using GodlessAPI.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +15,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information)
         .EnableSensitiveDataLogging();
 });
+
+builder.Services.AddScoped<IGodRepository, GodRepository>();
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 

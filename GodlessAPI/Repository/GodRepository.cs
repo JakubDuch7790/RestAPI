@@ -15,13 +15,13 @@ namespace GodlessAPI.Repository
         {
             _context = context;
         }
-        public async Task Create(Godless god)
+        public async Task CreateAsync(Godless god)
         {
             await _context.AddAsync(god);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Godless> Get(Expression<Func<Godless, bool>> filter = null, bool tracked = true)
+        public async Task<Godless> GetAsync(Expression<Func<Godless, bool>> filter = null, bool tracked = true)
         {
             IQueryable<Godless> query = _context.Gods;
 
@@ -39,7 +39,7 @@ namespace GodlessAPI.Repository
 
         }
 
-        public async Task<List<Godless>> GetAll(Expression<Func<Godless, bool>> filter = null)
+        public async Task<List<Godless>> GetAllAsync(Expression<Func<Godless, bool>> filter = null)
         {
             IQueryable<Godless> query = _context.Gods;
 
@@ -51,15 +51,22 @@ namespace GodlessAPI.Repository
             return await query.ToListAsync();
         }
 
-        public async Task Remove(Godless god)
+        public async Task RemoveAsync(Godless god)
         {
             _context.Gods.Remove(god);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Save()
+        public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateAsync(Godless god)
+        {
+            _context.Gods.Update(god);
+            await SaveAsync();
+        }
+
     }
 }

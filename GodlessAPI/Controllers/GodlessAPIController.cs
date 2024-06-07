@@ -2,6 +2,7 @@
 using GodlessAPI.Data;
 using GodlessAPI.Models;
 using GodlessAPI.Models.Dto;
+using GodlessAPI.Repository.IRepository;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,12 +14,12 @@ public class GodlessAPIController : ControllerBase
 {
     private readonly ILogger<GodlessAPIController> _logger;
     private readonly IMapper _mapper;
-    private readonly ApplicationDbContext _db;
+    private readonly IGodRepository _dbContext;
 
-    public GodlessAPIController(ILogger<GodlessAPIController> logger, ApplicationDbContext db, IMapper mapper)
+    public GodlessAPIController(ILogger<GodlessAPIController> logger, IGodRepository dbContext, IMapper mapper)
     {
         _logger = logger;
-        _db = db;
+        _dbContext = dbContext;
         _mapper = mapper;
     }
 
@@ -26,7 +27,7 @@ public class GodlessAPIController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GodlessDTO>>> GetGods()
     {
-        IEnumerable<Godless> godsList = await _db.Gods.ToListAsync();
+        IEnumerable<Godless> godsList = await _dbContext.GetAllAsync();
 
         return  Ok(_mapper.Map<List<GodlessDTO>>(godsList));
     }
@@ -46,7 +47,7 @@ public class GodlessAPIController : ControllerBase
             return BadRequest();
         }
 
-        var god = await _db.Gods.FirstOrDefaultAsync(god => god.Id == id);
+        var god = await _dbContext.GetAsync(god => god.Id == id);
 
         if(god == null)
         {
@@ -93,9 +94,7 @@ public class GodlessAPIController : ControllerBase
         //    Name = createDTO.Name,
         //    Creation = createDTO.Creation
         //};
-
-        await _db.Gods.AddAsync(godToAdd);
-        await _db.SaveChangesAsync();
+        await _dbContext.CreateAsync(godToAdd);
 
         return CreatedAtRoute("GetGod", new {id = godToAdd.Id} , godToAdd);
     }
@@ -110,15 +109,14 @@ public class GodlessAPIController : ControllerBase
         {
             return BadRequest();
         }
-        var god = await _db.Gods.FirstOrDefaultAsync(g => g.Id == id); 
+        var god = await _dbContext.GetAsync(g => g.Id == id); 
 
         if (god == null)
         {
             return NotFound();
         }
 
-        _db.Gods.Remove(god);
-        await _db.SaveChangesAsync();
+        await _dbContext.RemoveAsync(god);
 
         return NoContent();
     }
@@ -161,9 +159,7 @@ public class GodlessAPIController : ControllerBase
         //    Id = updateDTO.Id
         //};
 
-        _db.Gods.Update(updatedGod);
-
-        await _db.SaveChangesAsync();
+        await _dbContext.UpdateAsync(updatedGod);
 
         return NoContent();
     }
@@ -180,7 +176,7 @@ public class GodlessAPIController : ControllerBase
 
         // AsNoTracking means that EF CORE won't start to track this object after retrieving it from DB.
 
-        var god = await _db.Gods.AsNoTracking().FirstOrDefaultAsync(obj => obj.Id == id);
+        var god = await _dbContext.GetAsync(obj => obj.Id == id, tracked:false);
 
         GodlessUpdateDTO godlessUpdateDTO = _mapper.Map<GodlessUpdateDTO>(god);
 
@@ -205,10 +201,9 @@ public class GodlessAPIController : ControllerBase
         //    Name = gotPatch.Name
         //};
 
-        _db.Gods.Update(patchedGod);
-        await _db.SaveChangesAsync();
+        await _dbContext.UpdateAsync(patchedGod);
 
-        if(!ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
             return BadRequest();
         }
