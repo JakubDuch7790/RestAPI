@@ -17,8 +17,8 @@ namespace GodlessAPI
             CreateMap<GodNumber, GodNumberDTO>();
             CreateMap<GodNumberDTO, GodNumber>();
 
-            CreateMap<GodNumber, GodNumber>().ReverseMap();
-            CreateMap<GodNumber, GodlessUpdateDTO>().ReverseMap();
+            CreateMap<GodNumber, GodNumberCreatedDTO>().ReverseMap();
+            CreateMap<GodNumber, GodNumberUpdatedDTO>().ReverseMap();
 
         }
     }
