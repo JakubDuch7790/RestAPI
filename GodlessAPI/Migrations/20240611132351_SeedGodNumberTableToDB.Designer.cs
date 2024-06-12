@@ -4,6 +4,7 @@ using GodlessAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GodlessAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240611132351_SeedGodNumberTableToDB")]
+    partial class SeedGodNumberTableToDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,35 +48,35 @@ namespace GodlessAPI.Migrations
                         new
                         {
                             GodNo = 1,
-                            CreationDate = new DateTime(2024, 6, 12, 13, 32, 55, 467, DateTimeKind.Local).AddTicks(3599),
+                            CreationDate = new DateTime(2024, 6, 11, 15, 23, 50, 844, DateTimeKind.Local).AddTicks(4940),
                             SpecialDetails = "SuperVision",
                             UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             GodNo = 20,
-                            CreationDate = new DateTime(2024, 6, 12, 13, 32, 55, 467, DateTimeKind.Local).AddTicks(3603),
+                            CreationDate = new DateTime(2024, 6, 11, 15, 23, 50, 844, DateTimeKind.Local).AddTicks(4943),
                             SpecialDetails = "BigDick",
                             UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             GodNo = 333,
-                            CreationDate = new DateTime(2024, 6, 12, 13, 32, 55, 467, DateTimeKind.Local).AddTicks(3604),
+                            CreationDate = new DateTime(2024, 6, 11, 15, 23, 50, 844, DateTimeKind.Local).AddTicks(4945),
                             SpecialDetails = "SuperYoung",
                             UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             GodNo = 458,
-                            CreationDate = new DateTime(2024, 6, 12, 13, 32, 55, 467, DateTimeKind.Local).AddTicks(3606),
+                            CreationDate = new DateTime(2024, 6, 11, 15, 23, 50, 844, DateTimeKind.Local).AddTicks(4948),
                             SpecialDetails = "Tripple Nipple",
                             UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             GodNo = 566,
-                            CreationDate = new DateTime(2024, 6, 12, 13, 32, 55, 467, DateTimeKind.Local).AddTicks(3608),
+                            CreationDate = new DateTime(2024, 6, 11, 15, 23, 50, 844, DateTimeKind.Local).AddTicks(4949),
                             SpecialDetails = "TechKing",
                             UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
@@ -104,31 +107,31 @@ namespace GodlessAPI.Migrations
                         new
                         {
                             Id = 1,
-                            Creation = new DateTime(2024, 6, 12, 13, 32, 55, 467, DateTimeKind.Local).AddTicks(3436),
+                            Creation = new DateTime(2024, 6, 11, 15, 23, 50, 844, DateTimeKind.Local).AddTicks(4743),
                             Name = "Product A"
                         },
                         new
                         {
                             Id = 2,
-                            Creation = new DateTime(2024, 6, 12, 13, 32, 55, 467, DateTimeKind.Local).AddTicks(3488),
+                            Creation = new DateTime(2024, 6, 11, 15, 23, 50, 844, DateTimeKind.Local).AddTicks(4801),
                             Name = "Thor"
                         },
                         new
                         {
                             Id = 3,
-                            Creation = new DateTime(2024, 6, 12, 13, 32, 55, 467, DateTimeKind.Local).AddTicks(3490),
+                            Creation = new DateTime(2024, 6, 11, 15, 23, 50, 844, DateTimeKind.Local).AddTicks(4803),
                             Name = "Odin A"
                         },
                         new
                         {
                             Id = 4,
-                            Creation = new DateTime(2024, 6, 12, 13, 32, 55, 467, DateTimeKind.Local).AddTicks(3492),
+                            Creation = new DateTime(2024, 6, 11, 15, 23, 50, 844, DateTimeKind.Local).AddTicks(4804),
                             Name = "Thanos A"
                         },
                         new
                         {
                             Id = 5,
-                            Creation = new DateTime(2024, 6, 12, 13, 32, 55, 467, DateTimeKind.Local).AddTicks(3494),
+                            Creation = new DateTime(2024, 6, 11, 15, 23, 50, 844, DateTimeKind.Local).AddTicks(4806),
                             Name = "Julius A"
                         });
                 });

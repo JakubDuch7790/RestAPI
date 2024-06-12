@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddScoped<IGodRepository, GodRepository>();
+builder.Services.AddScoped<IGodNumberRepository, GodNumberRepository>();
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
